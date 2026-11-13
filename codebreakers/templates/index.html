@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CODEBREAKERS - Number Guessing Game</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='game-style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>CODEBREAKERS</h1>
+    <p>Think fast. Crack the code. Outsmart your opponent.</p>
+</header>
+
+<main>
+
+    <section id="game-menu">
+        <h2>Ready to Break the Code?</h2>
+
+        <button id="create-room" onclick="createRoom()">
+            Create a Room
+        </button>
+
+        <h3>OR</h3>
+
+        <label for="room-code">Enter Room Code:</label>
+
+        <input
+            type="text"
+            id="room-code"
+            placeholder="Enter room code"
+            maxlength="6"
+        >
+
+        <button id="join-room" onclick="joinRoom()">
+            Join Room
+        </button>
+    </section>
+
+    <section id="secret-code-section">
+        <h2>Choose Your Secret Code</h2>
+
+        <p>Enter four different digits from 0 to 9.</p>
+
+        <input
+            type="password"
+            id="secret-code"
+            maxlength="4"
+            inputmode="numeric"
+            placeholder="Enter 4 digits"
+        >
+
+        <button id="submit-secret-code" onclick="submitSecretCode()">
+            Submit Secret Code
+        </button>
+    </section>
+
+    <section id="guess-section">
+        <h2>Crack Your Opponent's Code</h2>
+
+        <p>Enter your four-digit guess.</p>
+
+        <input
+            type="text"
+            id="guess-input"
+            maxlength="4"
+            inputmode="numeric"
+            placeholder="Enter your guess"
+        >
+
+        <button id="submit-guess" onclick="submitGuess()">
+            Submit Guess
+        </button>
+    </section>
+
+    <section id="feedback-section">
+        <h2>Guess History</h2>
+
+        <div id="feedback-message">
+            Your feedback will appear here.
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Guess</th>
+                    <th>Locked In 🟢</th>
+                    <th>Misplaced 🟡</th>
+                </tr>
+            </thead>
+
+            <tbody id="guess-history"></tbody>
+        </table>
+    </section>
+
+    <section id="game-status">
+        <h2>Game Status</h2>
+
+        <p id="player-status">Waiting for players...</p>
+
+        <p id="turn-status">
+            Waiting for the game to begin.
+        </p>
+
+        <div id="winner-message"></div>
+
+        <button id="play-again" onclick="playAgain()">
+            Play Again
+        </button>
+    </section>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 CODEBREAKERS. All rights reserved.</p>
+    <p>Challenge your mind. Crack the code.</p>
+</footer>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+
+const socket = io();
+
+let currentRoomCode = "";
+let isMyTurn = false;
+let gameStarted = false;
+
+
+// CREATE A ROOM
+
+function createRoom() {
+    socket.emit("create_room");
+}
+
+
+// ROOM CREATED
+
+socket.on("room_created", function(data) {
+
+    currentRoomCode = data.room_code;
+
+    document.getElementById("room-code").value =
+        data.room_code;
+
+    document.getElementById("player-status").textContent =
+        "Room created! Share your room code with your opponent.";
+
+    alert("Your room code is: " + data.room_code);
+});
+
+
+// JOIN A ROOM
+
+function joinRoom() {
+
+    const roomCode =
+        document.getElementById("room-code").value.trim();
+
+    if (roomCode === "") {
+        alert("Please enter a room code.");
+        return;
+    }
+
+    socket.emit("join_room", {
+        room_code: roomCode
+    });
+}
+
+
+// ROOM JOINED
+
+socket.on("room_joined", function(data) {
+
+    currentRoomCode = data.room_code;
+
+    document.getElementById("player-status").textContent =
+        "You have joined the room. Waiting for your opponent...";
+});
+
+
+// OPPONENT JOINS
+
+socket.on("player_joined", function(data) {
+
+    document.getElementById("player-status").textContent =
+        "Your opponent has joined! Both players can choose their secret codes.";
+
+    alert(data.message);
+});
+
+
+// VALIDATE SECRET CODE
+
+function validateSecretCode(code) {
+
+    if (!/^\d{4}$/.test(code)) {
+        alert("Your secret code must contain exactly four digits.");
+        return false;
+    }
+
+    if (new Set(code).size !== 4) {
+        alert("Your secret code must contain four different digits.");
+        return false;
+    }
+
+    return true;
+}
+
+
+// SUBMIT SECRET CODE
+
+function submitSecretCode() {
+
+    const code =
+        document.getElementById("secret-code").value;
+
+    if (!currentRoomCode) {
+        alert("Please create or join a room first.");
+        return;
+    }
+
+    if (gameStarted) {
+        alert("The game has already started.");
+        return;
+    }
+
+    if (!validateSecretCode(code)) {
+        return;
+    }
+
+    socket.emit("submit_secret", {
+        room_code: currentRoomCode,
+        secret_code: code
+    });
+}
+
+
+// SECRET CODE RECEIVED
+
+socket.on("secret_received", function(data) {
+
+    document.getElementById("secret-code").value = "";
+
+    document.getElementById("player-status").textContent =
+        data.message + " Waiting for your opponent...";
+});
+
+
+// GAME READY
+
+socket.on("game_ready", function(data) {
+
+    gameStarted = true;
+
+    document.getElementById("player-status").textContent =
+        "Both players are ready! The game has started.";
+
+    document.getElementById("feedback-message").textContent =
+        "🔐 Game started! Get ready to crack your opponent's code.";
+
+    alert(data.message);
+});
+
+
+// HANDLE PLAYER TURNS
+
+socket.on("turn_changed", function(data) {
+
+    const turnStatus =
+        document.getElementById("turn-status");
+
+    isMyTurn = data.current_player === socket.id;
+
+    if (isMyTurn) {
+
+        turnStatus.textContent =
+            "🎯 It is your turn! Make a guess.";
+
+    } else if (data.current_player === null) {
+
+        isMyTurn = false;
+
+        turnStatus.textContent = "🏆 Game over!";
+
+    } else {
+
+        turnStatus.textContent =
+            "⏳ Waiting for your opponent's turn...";
+    }
+});
+
+
+// SUBMIT A GUESS
+
+function submitGuess() {
+
+    const guess =
+        document.getElementById("guess-input").value.trim();
+
+    if (!gameStarted) {
+        alert("The game has not started yet.");
+        return;
+    }
+
+    if (!isMyTurn) {
+        alert("Please wait! It is not your turn yet.");
+        return;
+    }
+
+    if (!/^\d{4}$/.test(guess) || new Set(guess).size !== 4) {
+        alert("Enter four different digits from 0 to 9.");
+        return;
+    }
+
+    socket.emit("submit_guess", {
+        room_code: currentRoomCode,
+        guess: guess
+    });
+
+    document.getElementById("guess-input").value = "";
+}
+
+
+// DISPLAY GUESS FEEDBACK
+
+socket.on("guess_result", function(data) {
+
+    const feedback =
+        document.getElementById("feedback-message");
+
+    const history =
+        document.getElementById("guess-history");
+
+    const row = document.createElement("tr");
+
+    const guessCell = document.createElement("td");
+    guessCell.textContent = data.guess;
+
+    const lockedCell = document.createElement("td");
+    lockedCell.textContent = data.locked_in;
+
+    const misplacedCell = document.createElement("td");
+    misplacedCell.textContent = data.misplaced;
+
+    row.appendChild(guessCell);
+    row.appendChild(lockedCell);
+    row.appendChild(misplacedCell);
+
+    history.appendChild(row);
+
+    if (data.winner) {
+
+        feedback.textContent =
+            "🏆 CODE CRACKED! YOU WIN!";
+
+        document.getElementById("winner-message").textContent =
+            "Congratulations! You cracked your opponent's code!";
+
+    } else if (
+        data.locked_in === 0 &&
+        data.misplaced === 0
+    ) {
+
+        feedback.textContent = "🔴 NO MATCH";
+
+    } else {
+
+        feedback.textContent =
+            "🟢 LOCKED IN: " + data.locked_in +
+            " | 🟡 MISPLACED: " + data.misplaced;
+    }
+});
+
+
+// OPPONENT MAKES A GUESS
+
+socket.on("opponent_guessed", function(data) {
+
+    document.getElementById("player-status").textContent =
+        "⚔️ Your opponent has made a guess! Get ready for your turn.";
+});
+
+
+// OPPONENT WINS
+
+socket.on("opponent_won", function(data) {
+
+    gameStarted = false;
+    isMyTurn = false;
+
+    document.getElementById("winner-message").textContent =
+        "🏆 GAME OVER! " + data.message;
+
+    document.getElementById("turn-status").textContent =
+        "Your opponent won this round.";
+
+    document.getElementById("feedback-message").textContent =
+        "Your secret code was cracked!";
+});
+
+
+// ERROR MESSAGES
+
+socket.on("error_message", function(data) {
+
+    alert("⚠️ " + data.message);
+
+    document.getElementById("feedback-message").textContent =
+        data.message;
+});
+
+
+// PLAY AGAIN
+
+function playAgain() {
+    location.reload();
+}
+
+
+// CONNECTION STATUS
+
+socket.on("connect", function() {
+
+    document.getElementById("player-status").textContent =
+        "Connected to the game server. Create or join a room!";
+});
+
+socket.on("disconnect", function() {
+
+    isMyTurn = false;
+    gameStarted = false;
+
+    document.getElementById("player-status").textContent =
+        "Connection lost. Please refresh the page to reconnect.";
+});
+
+</script>
+
+</body>
+</html>
