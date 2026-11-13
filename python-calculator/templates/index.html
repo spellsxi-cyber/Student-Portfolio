@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='calculator.css') }}">
+    <title>Python Calculator</title>
+</head>
+<body>
+<header>
+    <h1>Python Calculator</h1>
+    <p>Welcome to my simple calculator. Use it to perform basic mathematical operations.</p>
+</header>
+<main>
+    <section>
+        <h2>Calculator</h2>
+
+        <input type="text" id="display" value="0" readonly>
+<div id="calculator-buttons">
+
+    <button onclick="addToDisplay('0')">0</button>
+    <button onclick="addToDisplay('1')">1</button>
+    <button onclick="addToDisplay('2')">2</button>
+    <button onclick="addToDisplay('3')">3</button>
+   
+    <button onclick="addToDisplay('4')">4</button>
+    <button onclick="addToDisplay('5')">5</button>
+    <button onclick="addToDisplay('6')">6</button>
+
+    <button onclick="addToDisplay('7')">7</button>
+    <button onclick="addToDisplay('8')">8</button>
+    <button onclick="addToDisplay('9')">9</button>
+    
+    <button onclick="addToDisplay('/')">/</button>
+    <button onclick="addToDisplay('*')">*</button>
+    <button onclick="addToDisplay('.')">.</button>
+
+    <button onclick="calculateResult()">=</button>
+    <button onclick="addToDisplay('+')">+</button>
+    <button onclick="addToDisplay('-')">-</button>
+
+    <button onclick="clearDisplay()">Clear</button>
+
+</div>
+    </section>
+</main>
+<script>
+function addToDisplay(value) {
+document.getElementById("display");
+   if (display.value === "0") {
+        display.value = value;
+    } else {
+        display.value += value;
+    }
+}
+
+function clearDisplay() {
+    document.getElementById("display").value = "0";
+}
+async function calculateResult() {
+    const display = document.getElementById("display");
+    const expression = display.value;
+
+    const match = expression.match(/^(\d+(?:\.\d+)?)([+\-*\/])(\d+(?:\.\d+)?)$/);
+
+    if (!match) {
+        alert("Please enter a valid calculation.");
+        return;
+    
+}
+const num1 = match[1];
+const operator = match[2];
+const num2 = match[3];
+try{
+    const response = await fetch("/calculate", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        num1: num1,
+        num2: num2,
+        operator: operator
+    })
+});
+const data = await response.json();
+display.value = data.result;
+} catch (error) {
+    alert("Something went wrong. Please try again.");
+}
+}
+</script>
+</body>
+</html>
