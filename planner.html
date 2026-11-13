@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Academic Planner | Shalom</title>
+</head>
+
+<body class="planner-page">
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Me</a></li>
+        <li><a href="projects.html">Projects</a></li>
+        <li><a href="planner.html">Academic Planner</a></li>
+        <li><a href="contact.html">Contact</a></li>
+    </ul>
+</nav>
+<header class="planner-hero">
+    <h1>My Academic Planner</h1>
+
+    <p>
+        Welcome to my academic planner! This space helps
+        me organise my academic responsibilities, keep
+        track of important tasks and monitor my progress.
+    </p>
+</header>
+<main class="planner-main">
+
+    <section class="planner-card">
+        <h2>Add a New Academic Task</h2>
+
+        <form id="task-form"
+        class="planner-form">
+
+            <label for="task-input">Task Description:</label>
+            <input
+                type="text"
+                id="task-input"
+                placeholder="Enter your academic task"
+                required
+            >
+
+            <label for="task-date">Due Date:</label>
+            <input
+                type="date"
+                id="task-date"
+                required
+            >
+
+            <button type="submit">Add Task</button>
+
+        </form>
+        <div class="task-summary">
+
+    <div class="summary-box">
+        <p>Total Tasks</p>
+        <strong id="total-tasks">0</strong>
+    </div>
+
+    <div class="summary-box">
+        <p>Completed Tasks</p>
+        <strong id="completed-tasks">0</strong>
+    </div>
+
+
+</div>
+<div class="progress-section">
+
+    <div class="progress-heading">
+        <h3>My Academic Progress</h3>
+        <span id="progress-percentage">0%</span>
+    </div>
+
+    <div class="progress-track">
+        <div id="progress-fill" class="progress-fill"></div>
+    </div>
+
+    <p id="progress-text">0 of 0 tasks completed</p>
+
+</div>
+        <h2>My Academic Tasks</h2>
+
+<ul id="task-list"
+class="task-list">
+    <!-- Added tasks will appear here -->
+</ul>
+    </section>
+
+</main>
+<script>
+let tasks = [];
+
+const taskForm = document.getElementById("task-form");
+const taskInput = document.getElementById("task-input");
+const taskDate = document.getElementById("task-date");
+const taskList = document.getElementById("task-list");
+
+const totalTasksDisplay = document.getElementById("total-tasks");
+const completedTasksDisplay = document.getElementById("completed-tasks");
+const progressPercentage = document.getElementById("progress-percentage");
+const progressFill = document.getElementById("progress-fill");
+const progressText = document.getElementById("progress-text");
+
+// Update the dashboard counters
+function updateSummary() {
+
+    // Count all tasks
+    totalTasksDisplay.textContent = tasks.length;
+
+    // Count completed tasks
+    const completedCount = tasks.filter(function(task) {
+        return task.completed === true;
+    }).length;
+
+    completedTasksDisplay.textContent = completedCount;
+
+    // Calculate completion percentage
+    let percentage = 0;
+
+    if (tasks.length > 0) {
+        percentage = Math.round((completedCount / tasks.length) * 100);
+    }
+
+    // Update progress bar
+    progressPercentage.textContent = percentage + "%";
+    progressFill.style.width = percentage + "%";
+
+    // Update progress description
+    progressText.textContent =
+        completedCount + " of " + tasks.length + " tasks completed";
+}
+
+
+// Display all tasks
+function displayTasks() {
+    taskList.innerHTML = "";
+
+    tasks.forEach(function(task) {
+        const taskItem = document.createElement("li");
+
+        const taskText = document.createElement("span");
+        taskText.textContent = task.name + " - Due: " + task.date;
+
+        if (task.completed) {
+            taskText.style.textDecoration = "line-through";
+            taskText.style.color = "#78836d";
+        }
+
+        taskItem.appendChild(taskText);
+
+        const completeButton = document.createElement("button");
+        completeButton.textContent = task.completed
+            ? "Completed"
+            : "Mark as Completed";
+
+        completeButton.disabled = task.completed;
+
+       completeButton.addEventListener("click", function() {
+
+    task.completed = true;
+
+    updateSummary();
+    displayTasks();
+
+});
+
+        taskItem.appendChild(completeButton);
+
+        const deleteButton = document.createElement("button");
+        deleteButton.textContent = "Delete";
+
+        deleteButton.addEventListener("click", function() {
+            tasks = tasks.filter(function(item) {
+                return item !== task;
+            });
+
+            displayTasks();
+            updateSummary();
+        });
+
+        taskItem.appendChild(deleteButton);
+
+        taskList.appendChild(taskItem);
+    });
+}
+
+// Add a new academic task
+taskForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const taskName = taskInput.value.trim();
+    const dueDate = taskDate.value;
+
+    if (taskName === "" || dueDate === "") {
+        alert("Please enter a task and due date.");
+        return;
+    }
+
+    const task = {
+        name: taskName,
+        date: dueDate,
+        completed: false
+    };
+
+    tasks.push(task);
+
+    displayTasks();
+    updateSummary();
+
+    taskForm.reset();
+});
+
+// Show the initial counters
+updateSummary();
+
+    
+console.log("Total counter:", totalTasksDisplay);
+console.log("Completed counter:", completedTasksDisplay);
+
+</script>
+<footer>
+    <p>&copy; 2026 Ikhu-omoregbe Shalom. All rights reserved.</p>
+</footer>
+</body>
+</html>

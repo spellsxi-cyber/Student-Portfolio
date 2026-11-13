@@ -1,0 +1,351 @@
+/* BLOOD CELL LEARNING GUIDE - COLOUR PALETTE */
+
+:root {
+    --cream: #fbf6ed;
+    --white: #ffffff;
+    --burgundy: #711f35;
+    --blood-red: #c94350;
+    --mint: #b9d9c8;
+    --deep-green: #28594b;
+    --dark-text: #302b2a;
+    --soft-text: #756b68;
+}
+
+/* BASIC PAGE SETTINGS */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at 5% 10%, rgba(185, 217, 200, 0.35), transparent 25%),
+        radial-gradient(circle at 95% 80%, rgba(201, 67, 80, 0.10), transparent 25%),
+        var(--cream);
+    color: var(--dark-text);
+    line-height: 1.7;
+    min-height: 100vh;
+}
+/* MEDICAL LEARNING GUIDE HEADER */
+
+header {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    max-width: 1200px;
+    margin: 35px auto 60px;
+    padding: 85px 65px;
+    border-radius: 18px 100px 18px 18px;
+    background:
+        radial-gradient(circle at 85% 20%, rgba(185, 217, 200, 0.25), transparent 30%),
+        linear-gradient(135deg, #711f35, #3d1728);
+    color: #ffffff;
+}
+
+header::before {
+    content: "01";
+    position: absolute;
+    z-index: -1;
+    right: 45px;
+    bottom: -70px;
+    font-size: 260px;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.06);
+}
+
+header::after {
+    content: "✳️";
+    position: absolute;
+    top: 30px;
+    right: 55px;
+    color: var(--mint);
+    font-size: 55px;
+}
+
+header h1 {
+    max-width: 750px;
+    font-size: clamp(42px, 7vw, 78px);
+    line-height: 1.05;
+    letter-spacing: -3px;
+    margin-bottom: 25px;
+    color: #ffffff;
+}
+
+header p {
+    max-width: 620px;
+    font-size: 18px;
+    line-height: 1.9;
+    color: #f7e9e9;
+}
+/* MAIN CONTENT LAYOUT */
+
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 25px 60px;
+}
+
+/* LEARNING SECTIONS */
+
+main section {
+    margin: 35px 0;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(113, 31, 53, 0.12);
+    border-radius: 16px 45px 16px 16px;
+    box-shadow: 0 12px 35px rgba(70, 30, 40, 0.07);
+}
+
+/* SECTION HEADINGS */
+
+main section h2 {
+    color: var(--burgundy);
+    font-size: clamp(25px, 4vw, 35px);
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+main section h3 {
+    color: var(--deep-green);
+    font-size: 19px;
+    margin: 25px 0 10px;
+}
+
+main section p {
+    color: var(--soft-text);
+    line-height: 1.9;
+    margin-bottom: 15px;
+}
+
+/* LISTS */
+
+main section ul {
+    padding-left: 25px;
+    margin: 12px 0 20px;
+}
+
+main section li {
+    color: var(--dark-text);
+    padding: 5px 0;
+}
+
+main section li::marker {
+    color: var(--blood-red);
+}
+/* BLOOD CELL COMPARISON TABLE */
+
+main section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background: var(--white);
+    border: none;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+main section th {
+    background: var(--burgundy);
+    color: var(--white);
+    padding: 18px;
+    text-align: left;
+    font-size: 15px;
+}
+
+main section td {
+    padding: 17px 18px;
+    border-bottom: 1px solid #eee5e2;
+    color: var(--dark-text);
+}
+
+main section tr:nth-child(even) {
+    background: #f3f8f4;
+}
+
+main section tr:hover {
+    background: #fbe9e9;
+    transition: background 0.3s ease;
+}
+/* BLOOD CELL IMAGE PRESENTATION */
+
+main section img {
+    display: block;
+    width: 100%;
+    max-width: 430px;
+    height: 280px;
+    object-fit: cover;
+    margin: 25px auto;
+    border-radius: 18px 55px 18px 18px;
+    border: 5px solid var(--mint);
+    box-shadow: 0 15px 30px rgba(113, 31, 53, 0.12);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+main section img:hover {
+    transform: scale(1.025);
+    box-shadow: 0 20px 35px rgba(113, 31, 53, 0.2);
+}
+
+/* INDIVIDUAL BLOOD CELL SECTIONS */
+
+main section:nth-of-type(3),
+main section:nth-of-type(4),
+main section:nth-of-type(5) {
+    position: relative;
+    overflow: hidden;
+}
+
+main section:nth-of-type(3) {
+    border-top: 6px solid var(--blood-red);
+}
+
+main section:nth-of-type(4) {
+    border-top: 6px solid var(--deep-green);
+}
+
+main section:nth-of-type(5) {
+    border-top: 6px solid var(--burgundy);
+}
+/* INTERACTIVE QUIZ DESIGN */
+
+#quiz {
+    background:
+        radial-gradient(circle at 95% 5%, rgba(185, 217, 200, 0.3), transparent 30%),
+        linear-gradient(135deg, #ffffff, #f8eee9);
+    border: 2px solid rgba(113, 31, 53, 0.18);
+    padding: 45px;
+}
+
+#quiz h2 {
+    color: var(--burgundy);
+    font-size: clamp(30px, 4vw, 42px);
+    margin-bottom: 30px;
+}
+
+#blood-cell-quiz h3 {
+    color: var(--deep-green);
+    margin-top: 30px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(40, 89, 75, 0.2);
+}
+
+#blood-cell-quiz > label {
+    display: block;
+    width: fit-content;
+    margin: 12px 0;
+    padding: 12px 18px;
+    background: #ffffff;
+    border: 1px solid #eadbd8;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#blood-cell-quiz > label:hover {
+    background: #e8f3ec;
+    border-color: var(--deep-green);
+}
+
+#blood-cell-quiz input[type="radio"] {
+    accent-color: var(--blood-red);
+    margin-right: 10px;
+}
+
+#blood-cell-quiz button {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 15px 28px;
+    border: none;
+    border-radius: 30px;
+    background: var(--burgundy);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#blood-cell-quiz button:hover {
+    background: var(--deep-green);
+    transform: translateY(-3px);
+}
+
+#quiz-result {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 10px;
+    background: var(--mint);
+    color: var(--deep-green);
+    font-weight: bold;
+}
+/* MOBILE RESPONSIVENESS */
+
+@media (max-width: 768px) {
+
+    header {
+        margin: 15px 12px 35px;
+        padding: 45px 25px;
+        border-radius: 15px 55px 15px 15px;
+    }
+
+    header h1 {
+        font-size: 42px;
+        letter-spacing: -2px;
+    }
+
+    header p {
+        font-size: 16px;
+    }
+
+    header::before {
+        font-size: 150px;
+        right: 10px;
+        bottom: -35px;
+    }
+
+    header::after {
+        right: 20px;
+        top: 15px;
+        font-size: 35px;
+    }
+
+    main {
+        padding: 0 12px 40px;
+    }
+
+    main section {
+        padding: 25px 20px;
+        margin: 22px 0;
+        border-radius: 12px 35px 12px 12px;
+    }
+
+    main section img {
+        height: auto;
+        max-width: 100%;
+    }
+
+    main section table {
+        font-size: 13px;
+    }
+
+    main section th,
+    main section td {
+        padding: 10px 8px;
+    }
+
+    #quiz {
+        padding: 25px 20px;
+    }
+
+    #blood-cell-quiz > label {
+        width: 100%;
+    }
+}
