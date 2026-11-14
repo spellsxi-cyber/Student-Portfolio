@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -75,29 +78,57 @@
     </section>
 
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
 
-    const contactForm = document.getElementById("contact-form");
+    
+emailjs.init({
+    publicKey: "Hhpaq7t8trzfDJquq"
+});
 
-    contactForm.addEventListener("submit", function(event) {
+const contactForm = document.getElementById("contact-form");
 
-        const phone = document.getElementById("phone").value.trim();
+contactForm.addEventListener("submit", async function(event) {
+    event.preventDefault();
 
-        const phonePattern = /^\+?[0-9\s()-]{7,20}$/;
+    const phone = document.getElementById("phone").value.trim();
+    const phonePattern = /^\+?[0-9\s()-]{7,20}$/;
 
-        if (!phonePattern.test(phone)) {
-            event.preventDefault();
-            alert("Please enter a valid phone number.");
-            return;
-        }
+    if (!phonePattern.test(phone)) {
+        alert("Please enter a valid phone number.");
+        return;
+    }
 
-        event.preventDefault();
+    const button = contactForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    button.textContent = "Sending...";
 
-        alert("Your form has been submitted successfuly!");
+    const templateParams = {
+        from_name: document.getElementById("name").value.trim(),
+        from_email: document.getElementById("email").value.trim(),
+        phone: phone,
+        message: document.getElementById("message").value.trim()
+    };
 
+    try {
+        await emailjs.send(
+            "service_htxqqdo",
+            "template_6xfbld2",
+            templateParams
+        );
+
+        alert("Your message has been sent successfully!");
         contactForm.reset();
 
-    });
+    } catch (error) {
+        console.error("EmailJS error:", error);
+        alert("Sorry, your message could not be sent. Please try again.");
+
+    } finally {
+        button.disabled = false;
+        button.textContent = "Send Message";
+    }
+});
 
 </script>
 <footer>
